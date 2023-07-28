@@ -69,50 +69,47 @@ userRoutes.post("/inscription", async (req, res) => {
       firstName,
       email,
       password
-  } = req.body;
+    } = req.body;
+    
   try {
     const existClient = await User.findOne({
-        email
+        where: {
+            email,
+          },
     });
-    if (existClient) {
-        return res.status(200).json({
-            message: "address e-mail déjà utilisé"
-        });
-    }
-    console.log(mdp);
-    const salt = bcrypt.genSaltSync(10);
-    const hasshedPassord = bcrypt.hashSync(password, salt);
-      console.log(hasshedPassord);
-      new User({
-          name,
-          firstName,
-          email,
-          password,
-      }).save().then(function (user) {
-        const sujet ="Inscription Garage";
-        const text ="Bonjour Madame/Monsieur,"+user.nom+" "+user.prenom+".\n Vous êtes incrit dans notre garage!!"
-        mailService.sendEmail(sujet, text,user.email);
-        
-          const token = jwt.sign({
-              email: user.email,
-              id: user._id
-          }, SECRET_KEY, {
-              expiresIn: maxAge
+    //  if (existClient) {
+    //     return res.status(200).json({
+    //         message: "address e-mail déjà utilisé"
+    //     });
+    //  } else {
+        console.log(password);
+        const salt = bcrypt.genSaltSync(10);
+        const hasshedPassord = bcrypt.hashSync(password, salt);
+          urs = {
+              name,
+              firstName,
+              email,
+              password: hasshedPassord,
+          };
+          User.create(urs).then(function (user) {
+            const sujet ="Inscription chez Tongasoa";
+            const text ="Bonjour Madame/Monsieur, "+user.nom+" "+user.prenom+".\n Vous êtes incrit dans notre application mobile Tongasoa!!"
+            // mailService.sendEmail(sujet, text,user.email);
+            
+            const token = jwt.sign({
+                email: user.email,
+                id: user._id
+            }, SECRET_KEY, {
+                expiresIn: maxAge
+            });
+            res.cookie('jwt', token, {
+                httpOnly: true,
+                maxAge
+            });
+            res.status(201).json(user);
           });
-          res.cookie('jwt', token, {
-              httpOnly: true,
-              maxAge
-          });
-          res.status(201).json({
-                idUser:user._id,
-              nom: user.nom,
-              prenom: user.prenom,
-              mail: user.email,
-              token: token,
-              type:user.type
-
-          });
-      });
+// }
+    
 
   } catch (error) {
       console.log(error);

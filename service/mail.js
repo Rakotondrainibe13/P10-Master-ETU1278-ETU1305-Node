@@ -32,9 +32,9 @@ const sendEmail = ( sujet,text,email, res) => {
             .sendMail(mailOptions)
             .then(() => {
               console.log("fini");
-              res.json({
-                status: "EN COURS"
-              });
+              // res.json({
+              //   status: "EN COURS"
+              // });
             })
             .catch((err) => {
               console.log(err); 
