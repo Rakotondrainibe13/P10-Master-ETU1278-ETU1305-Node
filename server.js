@@ -6,6 +6,7 @@ app.use(express.json());
 const cors = require("cors");
 app.use(cors());
 app.use("/user", require("./routes/user"));
+app.use("/site", require("./routes/site"));
 require("./db/connection");
 require('dotenv').config();
 
