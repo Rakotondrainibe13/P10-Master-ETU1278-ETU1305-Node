@@ -8,6 +8,7 @@ const mailService = require("../service/mail");
 const Category = require("../models/Category");
 const Region = require("../models/Region");
 const Site = require("../models/Site");
+const Media = require("../models/Media");
 const Province = require("../models/Province");
 
 /**
@@ -28,6 +29,10 @@ siteRoutes.get("/", async (req, res) => {
               model: Category,
               as: 'Category',
             },
+            {
+              model: Media,
+              as:'Media',
+            }
           ],
         });
         res.json(sites);
