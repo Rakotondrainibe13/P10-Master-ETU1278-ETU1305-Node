@@ -10,12 +10,13 @@ const Region = require("../models/Region");
 const Site = require("../models/Site");
 const Media = require("../models/Media");
 const Province = require("../models/Province");
+const { Op } = require('sequelize');
 
 /**
  * route GET '/site'
  */
 siteRoutes.get("/", async (req, res) => {
-  const { search } = req.body;
+  const { search } = req.query;
     try {
         const sites = await Site.findAndCountAll({
           include:[
@@ -26,6 +27,7 @@ siteRoutes.get("/", async (req, res) => {
                 model: Province,
               },
             },
+
             {
               model: Category,
               as: 'Category',
@@ -35,8 +37,39 @@ siteRoutes.get("/", async (req, res) => {
               as:'Media',
             }
           ],
-          where: search ? {
-            name: search,
+          where: search ?  {
+            [Op.or]: [
+              { 
+                name: { 
+                  [Op.like]: `%${search}%`,
+                },
+              },
+              { 
+                description: { 
+                  [Op.like]: `%${search}%`,
+                },
+              },
+              { 
+                "$Region.name$":{ 
+                  [Op.like]: `%${search}%`,
+                },
+              },
+              { 
+                "$Region.Province.name$":{ 
+                  [Op.like]: `%${search}%`,
+                },
+              },
+              { 
+                "$Category.name$":{ 
+                  [Op.like]: `%${search}%`,
+                },
+              },
+              { 
+                "$Media.description$":{ 
+                  [Op.like]: `%${search}%`,
+                },
+              },
+            ],
           } : {},
         });
         res.json(sites);
