@@ -15,8 +15,9 @@ const Province = require("../models/Province");
  * route GET '/site'
  */
 siteRoutes.get("/", async (req, res) => {
+  const { search } = req.body;
     try {
-        const sites = await Site.findAll({
+        const sites = await Site.findAndCountAll({
           include:[
             {
               model: Region,
@@ -34,6 +35,9 @@ siteRoutes.get("/", async (req, res) => {
               as:'Media',
             }
           ],
+          where: search ? {
+            name: search,
+          } : {},
         });
         res.json(sites);
     } catch (error) {
