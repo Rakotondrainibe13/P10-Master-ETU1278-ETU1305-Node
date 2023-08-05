@@ -3,6 +3,7 @@ const sequelize = require('../db/connection');
 const Region = require('./Region');
 const Media = require('./Media');
 const Category = require('./Category');
+const Commentaire = require('./Commentaire');
 
 const Site = sequelize.define('Site', {
   id: {
@@ -49,4 +50,5 @@ const Site = sequelize.define('Site', {
 Site.belongsTo(Region, { as: 'Region', foreignKey: 'idRegion' });
 Site.belongsTo(Category, { as: 'Category', foreignKey: 'idCategory' });
 Site.hasMany(Media, { as: 'Media', foreignKey: 'idSite' });
+Site.hasMany(Commentaire, { as: 'Commentaire', foreignKey: 'idSite' });
 module.exports = Site;

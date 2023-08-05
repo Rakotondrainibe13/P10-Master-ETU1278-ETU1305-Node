@@ -10,6 +10,7 @@ const Region = require("../models/Region");
 const Site = require("../models/Site");
 const Media = require("../models/Media");
 const Province = require("../models/Province");
+const Commentaire = require("../models/Commentaire");
 const { Op } = require('sequelize');
 
 /**
@@ -35,6 +36,10 @@ siteRoutes.get("/", async (req, res) => {
             {
               model: Media,
               as:'Media',
+            },
+            {
+              model: Commentaire,
+              as:'Commentaire',
             }
           ],
           where: search ?  {
@@ -76,5 +81,40 @@ siteRoutes.get("/", async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: 'Internal server error', msg: error });
     }
+});
+
+siteRoutes.post("/addCommentaire", (req, res) => {
+  let { idUser, idSite, commentaire, note, createDate } = req.body;
+  const newCommentaire = new Commentaire({idSite: idSite, idUser:idUser, commentaire : commentaire, note:note, createDate: createDate});
+  newCommentaire
+    .save()
+    .then(() => {
+      res.json({
+        status: "EN COURS",
+        message: "Création d' commentaire effectué!",
+      });
+    })
+    .catch(() => {
+      res.json({
+        status: "ECHEC",
+        message: "Une erreur s'est produit lors de la création d' commentaire'!",
+      });
+    });
+});
+
+
+siteRoutes.get("/listCommentaire", async (req, res) => {
+  console.log("----------------------------", req.body);
+  const idSite = 1;
+  try {
+    const commentaires = await Commentaire.findAll({
+      where: {
+        idSite: idSite
+      }
+    });
+    res.json(commentaires);
+  } catch (error) {
+      res.status(500).json({ error: 'Internal server error', msg: error });
+  }
 });
 module.exports = siteRoutes;
