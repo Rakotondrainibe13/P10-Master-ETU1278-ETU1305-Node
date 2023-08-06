@@ -32,6 +32,10 @@ const Site = sequelize.define('Site', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  rating: {
+    type: DataTypes.DECIMAL(3,2),
+    allowNull: false,
+  },
   createdDate: {
     type: DataTypes.DATE,
     allowNull: true,
