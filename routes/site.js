@@ -12,6 +12,7 @@ const Media = require("../models/Media");
 const Province = require("../models/Province");
 const Commentaire = require("../models/Commentaire");
 const { Op } = require('sequelize');
+const Favoris = require("../models/Favoris");
 
 /**
  * route GET '/site'
@@ -40,6 +41,10 @@ siteRoutes.get("/", async (req, res) => {
             {
               model: Commentaire,
               as:'Commentaire',
+            },
+            {
+              model: Favoris,
+              as:'Favoris',
             }
           ],
           where: search ?  {
@@ -117,4 +122,99 @@ siteRoutes.get("/listCommentaire", async (req, res) => {
       res.status(500).json({ error: 'Internal server error', msg: error });
   }
 });
+
+siteRoutes.post("/addFavoris", async(req, res) => {
+  let { idUser, idSite, description, etat, createDate } = req.body;
+  const etatcreer = 0;
+  const etatannuler = -1
+  const favoris = await Favoris.findOne({
+    where: {
+      idSite: idSite,
+      idUser: idUser
+    }
+  });
+  const newFavoris = new Favoris({idSite: idSite, idUser:idUser, description : description, etat: etatcreer, createDate: createDate});
+  if (favoris) {
+    if (favoris.etat == etatcreer) {
+      etat = etatannuler
+    } else {
+      etat = etatcreer
+    }
+    Favoris.update(
+      { etat: etat }, {
+      where: {
+        id: favoris.id
+      }
+    }
+    ).then(() => {
+      res.json({
+        status: "EN COURS",
+        message: "Update d' favoris effectué!",
+      });
+    })
+      .catch((error) => {
+        res.json({
+          status: "ECHEC",
+          message: "Error",
+        });
+    });
+  } else {
+    newFavoris
+    .save()
+    .then(() => {
+      res.json({
+        status: "EN COURS",
+        message: "Création d' favoris effectué!",
+      });
+    })
+    .catch((error) => {
+      res.json({
+        status: "ECHEC",
+        message: "Error",
+      });
+    });
+  }
+});
+
+
+siteRoutes.get("/myfavorite", async (req, res) => {
+  const { idUser } = req.body;
+    try {
+        const sites = await Site.findAndCountAll({
+          include:[
+            {
+              model: Region,
+              as: 'Region',
+              include: {
+                model: Province,
+              },
+            },
+
+            {
+              model: Category,
+              as: 'Category',
+            },
+            {
+              model: Media,
+              as:'Media',
+            },
+            {
+              model: Commentaire,
+              as:'Commentaire',
+            },
+            {
+              model: Favoris,
+              as: 'Favoris',
+              where: {
+                idUser: idUser,
+              }
+            }
+          ],
+        });
+        res.json(sites);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error', msg: error });
+    }
+});
+
 module.exports = siteRoutes;

@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db/connection');
 
-const Commentaire = sequelize.define('Commentaire', {
+const Favoris = sequelize.define('Favoris', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -16,12 +16,12 @@ const Commentaire = sequelize.define('Commentaire', {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  commentaire: {
+  description: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
-  note: {
-    type: DataTypes.STRING,
+  etat: {
+    type: DataTypes.INTEGER,
     allowNull: true,
   },
   createDate: {
@@ -30,13 +30,13 @@ const Commentaire = sequelize.define('Commentaire', {
   },
 },
 {
-  tableName: 'Commentaire',
+  tableName: 'Favoris',
   timestamps: false,
 });
 
 //Créez la table dans la base de données (seulement si elle n'existe pas déjà)
 // (async () => {
-//   await Commentaire.sync();
-//   console.log('Commentaire table created successfully.');
+//   await Favoris.sync();
+//   console.log('Favoris table created successfully.');
 // })();
-module.exports = Commentaire;
+module.exports = Favoris;
