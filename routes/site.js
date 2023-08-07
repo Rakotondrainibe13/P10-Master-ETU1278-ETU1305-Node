@@ -179,6 +179,7 @@ siteRoutes.post("/addFavoris", async(req, res) => {
 
 siteRoutes.get("/myfavorite", async (req, res) => {
   const { idUser } = req.body;
+  console.log("idUser ùùùùùùùùùùùùù", idUser);
     try {
         const sites = await Site.findAndCountAll({
           include:[
@@ -206,7 +207,7 @@ siteRoutes.get("/myfavorite", async (req, res) => {
               model: Favoris,
               as: 'Favoris',
               where: {
-                idUser: idUser,
+                idUser,
                 etat: 0
               }
             }
