@@ -207,6 +207,7 @@ siteRoutes.get("/myfavorite", async (req, res) => {
               as: 'Favoris',
               where: {
                 idUser: idUser,
+                etat: 0
               }
             }
           ],
